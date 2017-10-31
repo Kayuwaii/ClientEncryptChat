@@ -18,33 +18,34 @@ namespace ClientEncryptChat
                 TcpClient tcpclnt = new TcpClient();
                 Console.WriteLine("Connecting.....");
 
-                tcpclnt.Connect("192.168.1.12", 8001);
+                tcpclnt.Connect("172.17.1.241", 8001);
                 // use the ipaddress as in the server program
 
-                String EncryptionKey = GetHashedKey("192.168.1.12");
+                string EncryptionKey = GetHashedKey("Alexandros");
+
                 Console.WriteLine("Connected");
                 Console.Write("Enter the string to be transmitted : ");
 
                 String str = TxtEncrypt(Console.ReadLine(), EncryptionKey);
                 Stream stm = tcpclnt.GetStream();
 
-                byte[] ba = Encoding.UTF8.GetBytes(str);
+                ASCIIEncoding asen = new ASCIIEncoding();
+                byte[] ba = asen.GetBytes(str);
                 Console.WriteLine("Transmitting.....");
 
                 stm.Write(ba, 0, ba.Length);
 
-                byte[] bb = new byte[ba.Length];
-                int k = stm.Read(bb, 0, ba.Length);
+                byte[] bb = new byte[100];
+                int k = stm.Read(bb, 0, 100);
 
                 for (int i = 0; i < k; i++)
                     Console.Write(Convert.ToChar(bb[i]));
 
                 tcpclnt.Close();
             }
-
             catch (Exception e)
             {
-                Console.WriteLine("Error..... " + e.StackTrace);
+                Console.WriteLine("Error..... " + e.ToString());
             }
             Console.ReadLine();
         }
