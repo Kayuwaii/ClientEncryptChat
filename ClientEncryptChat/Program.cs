@@ -24,23 +24,28 @@ namespace ClientEncryptChat
                 string EncryptionKey = GetHashedKey("Alexandros");
 
                 Console.WriteLine("Connected");
-                Console.Write("Enter the string to be transmitted : ");
+                bool cntrl = true;
+                while (cntrl)
+                {
+                    Console.Write("Me:\t ");
 
-                String str = TxtEncrypt(Console.ReadLine(), EncryptionKey);
-                Stream stm = tcpclnt.GetStream();
+                    String str = TxtEncrypt(Console.ReadLine(), EncryptionKey);
+                    Stream stm = tcpclnt.GetStream();
 
-                ASCIIEncoding asen = new ASCIIEncoding();
-                byte[] ba = asen.GetBytes(str);
-                Console.WriteLine("Transmitting.....");
+                    byte[] ba = Encoding.UTF8.GetBytes(str);
 
-                stm.Write(ba, 0, ba.Length);
+                    stm.Write(ba, 0, ba.Length);
 
-                byte[] bb = new byte[100];
-                int k = stm.Read(bb, 0, 100);
-
-                for (int i = 0; i < k; i++)
-                    Console.Write(Convert.ToChar(bb[i]));
-
+                    byte[] bb = new byte[tcpclnt.ReceiveBufferSize];
+                    int k = stm.Read(bb, 0, tcpclnt.ReceiveBufferSize);
+                    string msg = "";
+                    Console.Write("Other:\t");
+                    for (int i = 0; i < k; i++)
+                    {
+                        msg += Convert.ToChar(bb[i]);
+                    }
+                    Console.WriteLine(TxtDecrypt(msg, EncryptionKey));
+                }
                 tcpclnt.Close();
             }
             catch (Exception e)
