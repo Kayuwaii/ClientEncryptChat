@@ -18,7 +18,7 @@ namespace ClientEncryptChat
                 TcpClient tcpclnt = new TcpClient();
                 Console.WriteLine("Connecting.....");
 
-                tcpclnt.Connect("172.17.1.241", 8001);
+                tcpclnt.Connect("192.168.1.12", 8001);
                 // use the ipaddress as in the server program
 
                 string EncryptionKey = GetHashedKey("Alexandros");
